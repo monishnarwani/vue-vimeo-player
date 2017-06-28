@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div :id="identifier" :data-vimeo-url="source"></div>
+    <div :id="options.identifier" :data-vimeo-url="options.source"></div>
   </div>
 </template>
 
@@ -8,17 +8,9 @@
 import Player from '@vimeo/player'
 export default {
   props: {
-    source: {
-      type: String,
+    options: {
+      type: Object,
       required: true
-    },
-    identifier: {
-      type: String,
-      required: true
-    },
-    currentTime: {
-      type: Number,
-      default: 0
     }
   },
   data() {
@@ -27,15 +19,9 @@ export default {
     }
   },
   mounted() {
-    this.videoPlayer = new Player(this.identifier)
-    if(this.currentTime > 0) {
-      this.videoPlayer.setCurrentTime(this.currentTime)
-    }
+    this.videoPlayer = new Player(this.options.identifier)
     this.videoPlayer.on('play', (event) => {
       this.$emit('onplay', event)
-      // if(this.currentTime == event.seconds) { //if we want to stop autoplay
-      //   this.videoPlayer.pause()
-      // }
     })
     this.videoPlayer.on('pause', (event) => {
       this.$emit('onpause', event)
@@ -46,7 +32,6 @@ export default {
     this.videoPlayer.on('error', (event) => {
       this.$emit('onerror', event)
     })
-
   },
   beforeDestroy() {
     this.videoPlayer.off('play')
